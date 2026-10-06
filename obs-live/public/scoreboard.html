@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Marcador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Overlay para OBS: Fuente de navegador 1920x1080, fondo transparente. */
+  :root { --ink: #fff; --bar: #0d0f14; --muted: #a9b0bd; --accent: #f5c400; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: transparent; }
+  body { font-family: Oswald, 'Arial Narrow', Arial, sans-serif; color: var(--ink); }
+  body.preview { background: radial-gradient(ellipse at 50% 30%, #2f6b3a, #12331a 70%); }
+
+  .stack { position: absolute; left: 60px; bottom: 76px; display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+
+  .topic { display: flex; align-items: stretch; height: 40px; background: rgba(13,15,20,.92); font-size: 22px; letter-spacing: .04em;
+           transform-origin: left; transition: transform .35s ease, opacity .35s ease; }
+  .topic.hidden { transform: scaleX(0); opacity: 0; }
+  .topic .tag { background: var(--accent); color: #111; font-weight: 700; padding: 0 14px; display: flex; align-items: center; text-transform: uppercase; }
+  .topic .txt { padding: 0 18px; display: flex; align-items: center; text-transform: uppercase; white-space: nowrap; }
+
+  .bug { display: flex; height: 72px; background: var(--bar); box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+  .team { display: flex; align-items: stretch; }
+  .team .name { min-width: 128px; padding: 0 18px; display: flex; align-items: center; justify-content: center; gap: 10px;
+                font-size: 38px; font-weight: 700; letter-spacing: .03em; border-bottom: 6px solid transparent; box-sizing: border-box; }
+  .team .score { width: 92px; display: flex; align-items: center; justify-content: center; font-size: 46px; font-weight: 700;
+                 font-variant-numeric: tabular-nums; background: #1a1d25; }
+  .team .score.flash { animation: flash 1.2s ease; }
+  @keyframes flash { 0% { background: var(--accent); color: #111; } 100% { background: #1a1d25; color: var(--ink); } }
+  .meta { display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 120px; padding: 0 18px; }
+  .meta .period { font-size: 26px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .meta .clock { font-size: 26px; font-variant-numeric: tabular-nums; line-height: 1.2; }
+
+  .ticker { position: absolute; left: 0; right: 0; bottom: 0; height: 48px; background: rgba(13,15,20,.95); display: flex; align-items: stretch;
+            border-top: 3px solid var(--accent); transition: transform .4s ease; }
+  .ticker.hidden { transform: translateY(100%); }
+  .ticker .label { background: var(--accent); color: #111; font-weight: 700; font-size: 22px; padding: 0 20px; display: flex; align-items: center;
+                   z-index: 1; text-transform: uppercase; letter-spacing: .05em; }
+  .ticker .viewport { flex: 1; overflow: hidden; position: relative; }
+  .ticker .track { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; white-space: nowrap; will-change: transform; }
+  .result { display: inline-flex; align-items: center; gap: 10px; font-size: 24px; padding: 0 34px; border-right: 1px solid #2a2f3a; }
+  .result .chip { width: 8px; height: 22px; display: inline-block; }
+  .result b { font-variant-numeric: tabular-nums; }
+  .result .win { color: var(--ink); }
+  .result .lose { color: var(--muted); }
+  .result .st { color: var(--accent); font-size: 18px; margin-left: 6px; }
+  .offline { position: absolute; top: 12px; right: 12px; font: 14px Arial; background: #b00020; color: #fff; padding: 4px 8px; display: none; }
+  /* El aviso solo se ve en la vista previa, nunca al aire. */
+  body.preview .offline.on { display: block; }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="topic hidden" id="topic"><span class="tag">En vivo</span><span class="txt" id="topicTxt"></span></div>
+    <div class="bug">
+      <div class="team" id="away"><div class="name"></div><div class="score"></div></div>
+      <div class="team" id="home"><div class="name"></div><div class="score"></div></div>
+      <div class="meta"><div class="period" id="period"></div><div class="clock" id="clock"></div></div>
+    </div>
+  </div>
+  <div class="ticker hidden" id="ticker"><div class="label">Resultados</div><div class="viewport"><div class="track" id="track"></div></div></div>
+  <div class="offline" id="offline">Sin conexión con el administrador</div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  if (params.has('preview')) document.body.classList.add('preview');
+  const PERIOD_LABEL = { PRE: 'Previa', MT: 'Medio tiempo', FINAL: 'Final', OT: 'Tiempo extra' };
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let last = null;
+  let tickerKey = '';
+
+  function paintTeam(el, t, prev) {
+    const name = el.querySelector('.name');
+    const score = el.querySelector('.score');
+    name.textContent = t.id;
+    name.style.background = t.colors.primary;
+    name.style.borderBottomColor = t.colors.secondary;
+    if (score.textContent !== String(t.score)) {
+      score.textContent = t.score;
+      if (prev && prev.team === t.team && prev.score !== t.score) {
+        score.classList.remove('flash'); void score.offsetWidth; score.classList.add('flash');
+      }
+    }
+  }
+
+  function paintTicker(rows) {
+    const key = JSON.stringify(rows);
+    if (key === tickerKey) return;
+    tickerKey = key;
+    $('ticker').classList.toggle('hidden', rows.length === 0);
+    if (!rows.length) return;
+    const html = rows.map((r) => {
+      const aw = r.awayScore > r.homeScore, hw = r.homeScore > r.awayScore;
+      return `<span class="result">
+        <span class="chip" style="background:${r.awayTeam.colors.primary}"></span><span class="${hw ? 'lose' : 'win'}">${r.away} <b>${r.awayScore}</b></span>
+        <span class="chip" style="background:${r.homeTeam.colors.primary}"></span><span class="${aw ? 'lose' : 'win'}">${r.home} <b>${r.homeScore}</b></span>
+        <span class="st">${esc(r.status)}</span></span>`;
+    }).join('');
+    const track = $('track');
+    track.innerHTML = html + html; // doble para que el scroll sea continuo
+    track.getAnimations().forEach((a) => a.cancel());
+    const half = track.scrollWidth / 2;
+    track.animate([{ transform: 'translateX(0)' }, { transform: `translateX(-${half}px)` }],
+                  { duration: Math.max(12000, half * 14), iterations: Infinity });
+  }
+
+  function paint(s) {
+    paintTeam($('away'), s.away, last && last.away);
+    paintTeam($('home'), s.home, last && last.home);
+    $('period').textContent = PERIOD_LABEL[s.period] || s.period;
+    const showClock = !['PRE', 'MT', 'FINAL'].includes(s.period) && s.clock;
+    $('clock').textContent = showClock ? s.clock : '';
+    $('clock').style.display = showClock ? '' : 'none';
+    $('topicTxt').textContent = s.topic;
+    $('topic').classList.toggle('hidden', !s.topic);
+    paintTicker(s.ticker);
+    last = s;
+  }
+
+  function connect() {
+    const es = new EventSource('/api/broadcast/events');
+    es.onmessage = (e) => { $('offline').classList.remove('on'); paint(JSON.parse(e.data)); };
+    es.onerror = () => $('offline').classList.add('on'); // EventSource reintenta solo
+  }
+  connect();
+</script>
+</body>
+</html>

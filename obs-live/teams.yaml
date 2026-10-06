@@ -1,0 +1,44 @@
+# Los 32 equipos de la NFL.
+# id: abreviatura oficial (es la clave que usan /api/broadcast y los guiones).
+# colors: primario y secundario en hex, los usa el marcador en OBS.
+teams:
+  # AFC Este
+  - { id: BUF, name: Bills,      city: Buffalo,       conference: AFC, division: Este,  colors: { primary: "#00338D", secondary: "#C60C30" } }
+  - { id: MIA, name: Dolphins,   city: Miami,         conference: AFC, division: Este,  colors: { primary: "#008E97", secondary: "#FC4C02" } }
+  - { id: NE,  name: Patriots,   city: New England,   conference: AFC, division: Este,  colors: { primary: "#002244", secondary: "#C60C30" } }
+  - { id: NYJ, name: Jets,       city: New York,      conference: AFC, division: Este,  colors: { primary: "#125740", secondary: "#FFFFFF" } }
+  # AFC Norte
+  - { id: BAL, name: Ravens,     city: Baltimore,     conference: AFC, division: Norte, colors: { primary: "#241773", secondary: "#9E7C0C" } }
+  - { id: CIN, name: Bengals,    city: Cincinnati,    conference: AFC, division: Norte, colors: { primary: "#FB4F14", secondary: "#000000" } }
+  - { id: CLE, name: Browns,     city: Cleveland,     conference: AFC, division: Norte, colors: { primary: "#311D00", secondary: "#FF3C00" } }
+  - { id: PIT, name: Steelers,   city: Pittsburgh,    conference: AFC, division: Norte, colors: { primary: "#101820", secondary: "#FFB612" } }
+  # AFC Sur
+  - { id: HOU, name: Texans,     city: Houston,       conference: AFC, division: Sur,   colors: { primary: "#03202F", secondary: "#A71930" } }
+  - { id: IND, name: Colts,      city: Indianapolis,  conference: AFC, division: Sur,   colors: { primary: "#002C5F", secondary: "#A2AAAD" } }
+  - { id: JAX, name: Jaguars,    city: Jacksonville,  conference: AFC, division: Sur,   colors: { primary: "#006778", secondary: "#D7A22A" } }
+  - { id: TEN, name: Titans,     city: Tennessee,     conference: AFC, division: Sur,   colors: { primary: "#0C2340", secondary: "#4B92DB" } }
+  # AFC Oeste
+  - { id: DEN, name: Broncos,    city: Denver,        conference: AFC, division: Oeste, colors: { primary: "#FB4F14", secondary: "#002244" } }
+  - { id: KC,  name: Chiefs,     city: Kansas City,   conference: AFC, division: Oeste, colors: { primary: "#E31837", secondary: "#FFB81C" } }
+  - { id: LV,  name: Raiders,    city: Las Vegas,     conference: AFC, division: Oeste, colors: { primary: "#000000", secondary: "#A5ACAF" } }
+  - { id: LAC, name: Chargers,   city: Los Angeles,   conference: AFC, division: Oeste, colors: { primary: "#0080C6", secondary: "#FFC20E" } }
+  # NFC Este
+  - { id: DAL, name: Cowboys,    city: Dallas,        conference: NFC, division: Este,  colors: { primary: "#041E42", secondary: "#869397" } }
+  - { id: NYG, name: Giants,     city: New York,      conference: NFC, division: Este,  colors: { primary: "#0B2265", secondary: "#A71930" } }
+  - { id: PHI, name: Eagles,     city: Philadelphia,  conference: NFC, division: Este,  colors: { primary: "#004C54", secondary: "#A5ACAF" } }
+  - { id: WAS, name: Commanders, city: Washington,    conference: NFC, division: Este,  colors: { primary: "#5A1414", secondary: "#FFB612" } }
+  # NFC Norte
+  - { id: CHI, name: Bears,      city: Chicago,       conference: NFC, division: Norte, colors: { primary: "#0B162A", secondary: "#C83803" } }
+  - { id: DET, name: Lions,      city: Detroit,       conference: NFC, division: Norte, colors: { primary: "#0076B6", secondary: "#B0B7BC" } }
+  - { id: GB,  name: Packers,    city: Green Bay,     conference: NFC, division: Norte, colors: { primary: "#203731", secondary: "#FFB612" } }
+  - { id: MIN, name: Vikings,    city: Minnesota,     conference: NFC, division: Norte, colors: { primary: "#4F2683", secondary: "#FFC62F" } }
+  # NFC Sur
+  - { id: ATL, name: Falcons,    city: Atlanta,       conference: NFC, division: Sur,   colors: { primary: "#A71930", secondary: "#000000" } }
+  - { id: CAR, name: Panthers,   city: Carolina,      conference: NFC, division: Sur,   colors: { primary: "#0085CA", secondary: "#101820" } }
+  - { id: NO,  name: Saints,     city: New Orleans,   conference: NFC, division: Sur,   colors: { primary: "#D3BC8D", secondary: "#101820" } }
+  - { id: TB,  name: Buccaneers, city: Tampa Bay,     conference: NFC, division: Sur,   colors: { primary: "#D50A0A", secondary: "#34302B" } }
+  # NFC Oeste
+  - { id: ARI, name: Cardinals,  city: Arizona,       conference: NFC, division: Oeste, colors: { primary: "#97233F", secondary: "#FFB612" } }
+  - { id: LAR, name: Rams,       city: Los Angeles,   conference: NFC, division: Oeste, colors: { primary: "#003594", secondary: "#FFA300" } }
+  - { id: SF,  name: 49ers,      city: San Francisco, conference: NFC, division: Oeste, colors: { primary: "#AA0000", secondary: "#B3995D" } }
+  - { id: SEA, name: Seahawks,   city: Seattle,       conference: NFC, division: Oeste, colors: { primary: "#002244", secondary: "#69BE28" } }

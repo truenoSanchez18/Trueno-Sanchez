@@ -1,0 +1,17 @@
+{
+  "name": "obs-live",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Administrador del live en OBS: marcador, panel y guion por día.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "yaml": "^2.8.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

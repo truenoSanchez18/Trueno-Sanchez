@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f14">
+<title>Panel del live</title>
+<link rel="stylesheet" href="/static/panel.css">
+</head>
+<body>
+<header class="top">
+  <h1>Panel del live</h1>
+  <span class="status" id="status">Conectando…</span>
+</header>
+
+<main>
+  <section class="card" id="marcador">
+    <h2>Marcador</h2>
+
+    <div class="teams">
+      <div class="team" data-side="away">
+        <label>Visitante<select class="pick"></select></label>
+        <div class="score" aria-live="polite">0</div>
+        <div class="btns">
+          <button data-delta="6">+6</button><button data-delta="3">+3</button>
+          <button data-delta="2">+2</button><button data-delta="1">+1</button>
+          <button data-delta="-1" class="minus">−1</button>
+        </div>
+      </div>
+      <div class="team" data-side="home">
+        <label>Local<select class="pick"></select></label>
+        <div class="score" aria-live="polite">0</div>
+        <div class="btns">
+          <button data-delta="6">+6</button><button data-delta="3">+3</button>
+          <button data-delta="2">+2</button><button data-delta="1">+1</button>
+          <button data-delta="-1" class="minus">−1</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="periods" id="periods" role="group" aria-label="Periodo"></div>
+      <label class="clock">Reloj<input id="clock" inputmode="numeric" placeholder="15:00" maxlength="5"></label>
+    </div>
+
+    <h3>Tema activo</h3>
+    <form class="inline" id="topicForm">
+      <input id="topic" placeholder="Ej. Análisis de la primera mitad" maxlength="80">
+      <button type="submit">Poner</button>
+      <button type="button" id="topicClear" class="ghost">Quitar</button>
+    </form>
+    <p class="hint" id="topicNow"></p>
+
+    <h3>Cinta de resultados</h3>
+    <div id="ticker" class="ticker"></div>
+    <div class="inline">
+      <button type="button" id="tickerAdd" class="ghost">+ Agregar resultado</button>
+      <button type="button" id="tickerSave">Guardar cinta</button>
+    </div>
+    <p class="hint" id="tickerState"></p>
+  </section>
+
+  <p class="links">Overlay para OBS: <a id="overlayLink" href="/scoreboard?preview" target="_blank">/scoreboard</a></p>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="/static/panel.js"></script>
+</body>
+</html>
